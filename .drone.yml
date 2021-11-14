@@ -7,75 +7,11 @@ platform:
   arсh: amd64
 
 steps:
-  - name: build-image
-    pull: if-not-exists
-    image: plugins/docker
-    # privileged: true
-    settings:
-      mirror: https://docker.mirrors.ustc.edu.cn
-      storage_driver: vfs
-      cache_from: godd6366/drone-demo:latest
-      dockerfile: Dockerfile
-      repo: godd6366/drone-demo
-      tags:
-        - latest
-        - ${DRONE_BUILD_NUMBER}
-      username:
-        from_secret: DOCKER_NAME
-      password:
-        from_secret: DOCKER_PWD
-
-  - name: build-docker-compose
-    pull: if-not-exists
-    image: node
-    settings:
-      mirror: https://docker.mirrors.ustc.edu.cn
-    commands:
-      - node scripts/update.js --version ${DRONE_BUILD_NUMBER}
-
-  - name: scp-docker-compose
-    pull: if-not-exists
-    image: appleboy/drone-scp
-    settings:
-      host:
-        from_secret: SERVER_IP
-      username:
-        from_secret: SERVER_NAME
-      password:
-        from_secret: SERVER_PWD
-      port: 22
-      target: /volume1/MyFiles/DockerServers/drone-demo/${DRONE_BUILD_NUMBER}
-      source:
-        - docker-compose.yaml
-
-  - name: deploy-container
-    pull: if-not-exists
-    image: appleboy/drone-ssh
-    settings:
-      host:
-        from_secret: SERVER_IP
-      username:
-        from_secret: SERVER_NAME
-      password:
-        from_secret: SERVER_PWD
-      port: 22
-      script:
-        - export PATH=$HOME/bin:/usr/local/bin:/usr/syno/sbin:/usr/syno/bin:/usr/local/sbin:/usr/local/bin:$PATH
-        # 关闭现有服务
-        - list=$(docker ps -a| grep my-demo-server | awk '{print $1}')
-        - test "$list" = "" && echo "none my-demo-server containers running" || docker rm $list -f
-        # 删除旧版本镜像
-        - imglist=$(docker images | grep drone-demo | awk '{print $3}')
-        - test "$imglist" = "" && echo "none drone-demo images" || docker rmi $imglist -f
-        # 启动新服务
-        - cd /volume1/MyFiles/DockerServers/drone-demo/${DRONE_BUILD_NUMBER}
-        - docker-compose up -d
-
   - name: send
     image: plugins/webhook
     settings:
       urls:
-        from_secret: SERVER_PWD
+        - from_secret: SERVER_PWD
     when: # 无论成功失败都运行
       status:
         - failure

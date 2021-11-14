@@ -11,7 +11,8 @@ steps:
     image: plugins/webhook
     settings:
       urls:
-        - from_secret: SERVER_PWD
+        -
+          from_secret: SERVER_PWD
     when: # 无论成功失败都运行
       status:
         - failure

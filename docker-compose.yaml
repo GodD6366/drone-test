@@ -1,0 +1,21 @@
+version: '3'
+
+services:
+  my-demo-server:
+    container_name: my-demo-server-${DRONE_BUILD_NUMBER}
+    image: godd6366/drone-demo:${DRONE_BUILD_NUMBER}
+    networks:
+      - traefik
+    labels:
+      - "traefik.enable=true"
+      - "traefik.docker.network=traefik"
+      - "traefik.http.routers.demo.entrypoints=https"
+      - "traefik.http.routers.demo.rule=Host(`demo.godd.site`)"
+      - "traefik.http.routers.demo.tls=true"
+      - "traefik.http.routers.demo.tls.certresolver=myresolver"
+      - "traefik.http.services.demobackend.loadbalancer.server.scheme=http"
+      - "traefik.http.services.demobackend.loadbalancer.server.port=3000"
+
+networks:
+  traefik:
+    external: true

@@ -1,0 +1,22 @@
+{
+  "name": "drone-test",
+  "version": "1.0.0",
+  "description": "drone-test",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/GodD6366/drone-test.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/GodD6366/drone-test/issues"
+  },
+  "homepage": "https://github.com/GodD6366/drone-test#readme",
+  "dependencies": {
+    "koa": "^2.13.4"
+  }
+}

@@ -20,8 +20,10 @@ steps:
       tags:
         - latest
         - ${DRONE_BUILD_NUMBER}
-      username: ${DOCKER_NAME}
-      password: ${DOCKER_PWD}
+      username:
+        from_secret: DOCKER_NAME
+      password:
+        from_secret: DOCKER_PWD
 
   - name: build-docker-compose
     pull: if-not-exists
@@ -35,9 +37,12 @@ steps:
     pull: if-not-exists
     image: appleboy/drone-scp
     settings:
-      host: ${SERVER_IP}
-      username: ${SERVER_NAME}
-      password: ${SERVER_PWD}
+      host:
+        from_secret: SERVER_IP
+      username:
+        from_secret: SERVER_NAME
+      password:
+        from_secret: SERVER_PWD
       port: 22
       target: /volume1/MyFiles/DockerServers/drone-demo/${DRONE_BUILD_NUMBER}
       source:
@@ -47,9 +52,12 @@ steps:
     pull: if-not-exists
     image: appleboy/drone-ssh
     settings:
-      host: ${SERVER_IP}
-      username: ${SERVER_NAME}
-      password: ${SERVER_PWD}
+      host:
+        from_secret: SERVER_IP
+      username:
+        from_secret: SERVER_NAME
+      password:
+        from_secret: SERVER_PWD
       port: 22
       script:
         - export PATH=$HOME/bin:/usr/local/bin:/usr/syno/sbin:/usr/syno/bin:/usr/local/sbin:/usr/local/bin:$PATH
@@ -67,7 +75,7 @@ steps:
     image: plugins/webhook
     settings:
       urls:
-        - ${WEBHOOK_URL}
+        from_secret: SERVER_PWD
     when: # 无论成功失败都运行
       status:
         - failure
